@@ -2,8 +2,10 @@ package vn.com.ltdt.finwise.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UuidGenerator;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -21,10 +23,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class User implements UserDetails {
+@Builder
+public class AppUser implements UserDetails {
     @Id
-    @GeneratedValue
-    @UUID
+    @UuidGenerator
     private String userId;
     @Column(nullable = false)
     private String fullName;
@@ -37,9 +39,7 @@ public class User implements UserDetails {
     private LocalDate dateOfBirth;
     private String securityPin;
     private boolean isEnabled;
-    private boolean isAccountNonExpired;
-    private boolean isCredentialsNonExpired;
-    private boolean isAccountNonLocked;
+
     @CreatedDate
     private LocalDate createdDate;
     @ManyToMany(fetch = FetchType.EAGER)
@@ -67,26 +67,11 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return this.email.isBlank() ? this.phoneNumber : this.email;
     }
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return this.isEnabled;
     }
 }
