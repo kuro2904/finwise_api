@@ -4,12 +4,9 @@ import com.nimbusds.jose.JOSEException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import vn.com.ltdt.finwise.dtos.LoginRequest;
-import vn.com.ltdt.finwise.dtos.RegisterRequest;
+import org.springframework.web.bind.annotation.*;
+import vn.com.ltdt.finwise.dtos.auth.LoginRequest;
+import vn.com.ltdt.finwise.dtos.auth.RegisterRequest;
 import vn.com.ltdt.finwise.dtos.Token;
 import vn.com.ltdt.finwise.services.AuthService;
 
@@ -27,6 +24,12 @@ public class AuthController {
     @PostMapping("login")
     public ResponseEntity<Token> login(@RequestBody LoginRequest request) throws JOSEException {
         return ResponseEntity.ok(authService.login(request));
+    }
+
+    @PostMapping("verify/{userId}")
+    public ResponseEntity<Void> verify(@PathVariable("userId") String userId) throws JOSEException {
+        authService.verifyUser(userId);
+        return ResponseEntity.noContent().build();
     }
 
 }

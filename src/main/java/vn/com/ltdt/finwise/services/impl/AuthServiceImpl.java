@@ -3,10 +3,14 @@ package vn.com.ltdt.finwise.services.impl;
 import com.nimbusds.jose.JOSEException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import vn.com.ltdt.finwise.dtos.LoginRequest;
-import vn.com.ltdt.finwise.dtos.RegisterRequest;
+import vn.com.ltdt.finwise.dtos.auth.LoginRequest;
+import vn.com.ltdt.finwise.dtos.auth.RegisterRequest;
 import vn.com.ltdt.finwise.dtos.Token;
 import vn.com.ltdt.finwise.entities.AppUser;
 import vn.com.ltdt.finwise.entities.Role;
@@ -26,6 +30,7 @@ import java.util.List;
 public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
+    private final AuthenticationManager authenticationManager;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtProvider jwtProvider;
@@ -44,7 +49,8 @@ public class AuthServiceImpl implements AuthService {
                 .phoneNumber(request.phoneNumber())
                 .password(passwordEncoder.encode(request.password()))
                 .fullName(request.fullName())
-                .isEnabled(false)
+                // TODO: set False later
+                .isEnabled(true)
                 .roles(roles)
                 .dateOfBirth(LocalDate.parse(request.dateOfBirth(), DateTimeFormatter.ofPattern("dd-MM-yyyy")))
                 .build();
@@ -57,6 +63,24 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Token login(LoginRequest request) throws JOSEException {
-        return null;
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return new Token(
+                "bearer ",
+                jwtProvider.generateToken((AppUser) authentication.getPrincipal())
+        );
+    }
+
+    @Override
+    public void verifyUser(String userId) {
+        AppUser appUser = userRepository.findById(userId).orElseThrow(
+                () -> new RuntimeException("User not found")
+        );
+        if(!appUser.isEnabled()) {
+            appUser.setEnabled(true);
+        }
+        userRepository.save(appUser);
     }
 }

@@ -1,4 +1,4 @@
-package vn.com.ltdt.finwise.dtos;
+package vn.com.ltdt.finwise.dtos.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +11,6 @@ public record RegisterRequest(
         String password,
         @NotNull @NotBlank
         String phoneNumber,
-                String dateOfBirth
+        String dateOfBirth
 ) {
 }
