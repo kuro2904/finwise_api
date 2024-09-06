@@ -2,11 +2,11 @@
 <html lang="en" xmlns:th="https://www.thymeleaf.org/">
 <head>
     <meta charset="UTF-8">
-    <title>Verify account</title>
+    <title>FinWise Greeting!!</title>
 </head>
 <body>
     <p>
-        Thank you for trusting and using our application. Please <a th:href="@{#}">click here</a> to verify your email.
+        Thank you for trusting and using our application. Please <a th:href="@{http://192.168.1.12:8888/api/v1/auth/verify/{userId}(userId=${userId})}">click here</a> to verify your email.
     </p>
 </body>
 </html>

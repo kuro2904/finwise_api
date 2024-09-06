@@ -33,9 +33,7 @@ public class JwtProvider {
         JWSObject jwsObject = createJWTObject(user, expirationDate, currentDateTime);
 
         jwsObject.sign(signer);
-        String s = jwsObject.serialize();
-        log.info("JWT generated : {}", s);
-        return s;
+        return jwsObject.serialize();
     }
 
     private JWSObject createJWTObject(AppUser user, LocalDateTime expirationDate, LocalDateTime currentDateTime) {
