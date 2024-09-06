@@ -1,0 +1,19 @@
+spring.application.name=FinWise
+
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+
+spring.jpa.hibernate.ddl-auto=
+
+server.port=
+
+
+secret_key=
+
+spring.mail.host=
+spring.mail.username=
+spring.mail.password=
+spring.mail.port=
+spring.mail.properties.mail.smtp.starttls.enable =
+spring.mail.properties.mail.smtp.auth=
